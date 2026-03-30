@@ -36,7 +36,7 @@ class LayoutView
         echo <<<HTML
         <hr>
         <footer>
-            <p>Horváth Marcell v8 &copy; 2026</p>
+            <p>Horváth Marcell v9 &copy; 2026</p>
         </footer>
         </body>
         </html>

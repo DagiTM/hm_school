@@ -14,7 +14,7 @@ class MaintenanceView
                évfolyamonként 4-5 osztályt, osztályonként 12-15 tanulót,
                és minden tanulónak legalább 5 tantárgyból 3-4 jegyet.</p>
             <button type="submit" name="generate-data"
-                    onclick="return confirm('Biztosan generálod az adatokat? Meglévő adatok megmaradnak.')">
+                    onclick="return confirm('Biztosan generálod az adatokat? A meglévő adatok törlődnek!')">
                 Adatok generálása
             </button>
         </form>
