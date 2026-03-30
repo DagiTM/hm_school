@@ -1,0 +1,1 @@
+Az osztalyok es a tanulok osztalyzatainak atlaga a ListsController.php-ban történik, így volt nekem a legegyszerűbb megoldani.

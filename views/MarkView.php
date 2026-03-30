@@ -185,4 +185,99 @@ class MarkView
         </form>
         HTML;
     }
+
+    public static function maintenanceList(array $items, array $students, array $subjects, string $route): void
+    {
+        $studentMap = [];
+        foreach ($students as $s) {
+            $studentMap[$s['id']] = $s['name'];
+        }
+        $subjectMap = [];
+        foreach ($subjects as $s) {
+            $subjectMap[$s['id']] = $s['name'];
+        }
+        echo <<<HTML
+        <h1>Osztályzatok</h1>
+        <table border="1" cellpadding="5">
+            <tr><th>ID</th><th>Tanuló</th><th>Tantárgy</th><th>Jegy</th><th>Dátum</th><th>Műveletek</th></tr>
+        HTML;
+        foreach ($items as $m) {
+            $id      = $m['id'];
+            $student = htmlspecialchars($studentMap[$m['student_id']] ?? $m['student_id'], ENT_QUOTES, 'UTF-8');
+            $subject = htmlspecialchars($subjectMap[$m['subject_id']] ?? $m['subject_id'], ENT_QUOTES, 'UTF-8');
+            $mark    = htmlspecialchars($m['mark'], ENT_QUOTES, 'UTF-8');
+            $date    = htmlspecialchars($m['date'], ENT_QUOTES, 'UTF-8');
+            echo <<<HTML
+            <tr>
+                <td>{$id}</td><td>{$student}</td><td>{$subject}</td>
+                <td>{$mark}</td><td>{$date}</td>
+                <td>
+                    <a href="index.php?view={$route}&edit={$id}">Módosítás</a> |
+                    <a href="index.php?view={$route}&delete-mark={$id}"
+                       onclick="return confirm('Biztos törlöd?')">Törlés</a>
+                </td>
+            </tr>
+            HTML;
+        }
+        echo "</table>";
+    }
+
+    public static function maintenanceAddForm(array $students, array $subjects, string $route): void
+    {
+        $sOpts   = self::buildOptions($students, 'name');
+        $subOpts = self::buildOptions($subjects, 'name');
+        $back    = "index.php?view={$route}";
+        echo <<<HTML
+        <h1>Új osztályzat</h1>
+        <form method="post" action="index.php?view={$route}">
+            <label>Tanuló:</label><br>
+            <select name="student_id">{$sOpts}</select><br><br>
+            <label>Tantárgy:</label><br>
+            <select name="subject_id">{$subOpts}</select><br><br>
+            <label>Jegy (1-5):</label><br>
+            <input type="number" name="mark" min="1" max="5" required><br><br>
+            <label>Dátum:</label><br>
+            <input type="date" name="date" required><br><br>
+            <button type="submit" name="add-mark">Hozzáadás</button>
+            <a href="{$back}">Mégse</a>
+        </form>
+        HTML;
+    }
+
+    public static function maintenanceEditForm(array $m, array $students, array $subjects, string $route): void
+    {
+        $id      = $m['id'];
+        $mark    = htmlspecialchars($m['mark'], ENT_QUOTES, 'UTF-8');
+        $date    = htmlspecialchars($m['date'], ENT_QUOTES, 'UTF-8');
+        $sOpts   = self::buildOptions($students, 'name',  $m['student_id']);
+        $subOpts = self::buildOptions($subjects, 'name',  $m['subject_id']);
+        $back    = "index.php?view={$route}";
+        echo <<<HTML
+        <h1>Osztályzat módosítása</h1>
+        <form method="post" action="index.php?view={$route}">
+            <input type="hidden" name="id" value="{$id}">
+            <label>Tanuló:</label><br>
+            <select name="student_id">{$sOpts}</select><br><br>
+            <label>Tantárgy:</label><br>
+            <select name="subject_id">{$subOpts}</select><br><br>
+            <label>Jegy (1-5):</label><br>
+            <input type="number" name="mark" value="{$mark}" min="1" max="5" required><br><br>
+            <label>Dátum:</label><br>
+            <input type="date" name="date" value="{$date}" required><br><br>
+            <button type="submit" name="update-mark">Mentés</button>
+            <a href="{$back}">Mégse</a>
+        </form>
+        HTML;
+    }
+
+    private static function buildOptions(array $items, string $labelField, $selected = null): string
+    {
+        $html = '';
+        foreach ($items as $item) {
+            $sel   = ($item['id'] == $selected) ? ' selected' : '';
+            $label = htmlspecialchars($item[$labelField], ENT_QUOTES, 'UTF-8');
+            $html .= "<option value=\"{$item['id']}\"{$sel}>{$label}</option>";
+        }
+        return $html;
+    }
 }
